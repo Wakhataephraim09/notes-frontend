@@ -10,7 +10,12 @@ async function getNotes() {
 
     data.forEach(note => {
         const li = document.createElement("li");
-        li.textContent = note.content;
+
+        li.innerHTML = `
+            ${note.content}
+            <button onclick="deleteNote(${note.id})" style="float:right; background:red;">X</button>
+        `;
+
         list.appendChild(li);
     });
 }
@@ -18,6 +23,8 @@ async function getNotes() {
 // Add note
 async function addNote() {
     const input = document.getElementById("noteInput");
+
+    if (!input.value) return;
 
     await fetch(API_URL, {
         method: "POST",
@@ -30,6 +37,15 @@ async function addNote() {
     });
 
     input.value = "";
+    getNotes();
+}
+
+// Delete note
+async function deleteNote(id) {
+    await fetch(`${API_URL}/${id}`, {
+        method: "DELETE"
+    });
+
     getNotes();
 }
 
